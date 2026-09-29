@@ -17,7 +17,7 @@ data class BloqueHorario(
 data class ReservaSemestral(
     val id: String,
     val salaCodigo: String,
-    val asignaura: String,
+    val asignatura: String,
     val docente: String,
     val fecha: String,
     val mes: String,
