@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.duoc.therionlabs.model.BloqueHorario
-
+import androidx.compose.foundation.layout.statusBarsPadding
 // Colores Institucionales Duoc UC
 val DuocAzul = Color(0xFF002E56)
 val DuocAmarillo = Color(0xFFFDBB30)
@@ -50,6 +50,7 @@ fun DisponibilidadSalasScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(DuocAzul)
+                    .statusBarsPadding()
                     .padding(horizontal = 16.dp, vertical = 16.dp)
             ) {
                 Column(modifier = Modifier.align(Alignment.CenterStart)) {
