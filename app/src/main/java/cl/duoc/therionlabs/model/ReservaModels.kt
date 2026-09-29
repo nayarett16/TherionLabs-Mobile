@@ -13,3 +13,16 @@ data class BloqueHorario(
     val asignatura: String?=null,
     val docente: String?= null
 )
+
+data class ReservaSemestral(
+    val id: String,
+    val salaCodigo: String,
+    val asignaura: String,
+    val docente: String,
+    val fecha: String,
+    val mes: String,
+    val diaSemana: String,
+    val numeroSemana: Int,
+    val HoraInicio: String,
+    val HoraFin: String
+)
