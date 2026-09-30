@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cl.duoc.therionlabs.model.BloqueHorario
-import androidx.compose.foundation.layout.statusBarsPadding
+
 // Colores Institucionales Duoc UC
 val DuocAzul = Color(0xFF002E56)
 val DuocAmarillo = Color(0xFFFDBB30)
@@ -28,12 +28,15 @@ val DisponibleFondo = Color(0xFFE8F5E9)
 val ReservadoRojo = Color(0xFFC62828)
 val ReservadoFondo = Color(0xFFFFEBEE)
 
+enum class PantallaPrincipal { BUSCAR, CALENDARIO }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisponibilidadSalasScreen(
     onLogoutClick: () -> Unit = {},
     onReservarClick: (BloqueHorario) -> Unit = {}
 ) {
+    var pantallaActual by remember { mutableStateOf(PantallaPrincipal.BUSCAR) }
     var codigoSala by remember { mutableStateOf("LC25") }
 
     val bloques = listOf(
@@ -45,126 +48,145 @@ fun DisponibilidadSalasScreen(
     )
 
     Scaffold(
-        topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(DuocAzul)
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
-            ) {
-                Column(modifier = Modifier.align(Alignment.CenterStart)) {
-                    Text(
-                        text = "DISPONIBILIDAD DE SALAS",
-                        color = Color.White,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Consulta de Recintos",
-                        color = DuocAmarillo,
-                        fontSize = 13.sp
-                    )
-                }
-
-                OutlinedButton(
-                    onClick = onLogoutClick,
-                    modifier = Modifier.align(Alignment.CenterEnd),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
-                ) {
-                    Text("SALIR", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = DuocAmarillo)
-                }
-            }
-        },
         bottomBar = {
             NavigationBar(containerColor = Color.White) {
                 NavigationBarItem(
-                    selected = true,
-                    onClick = { },
+                    selected = pantallaActual == PantallaPrincipal.BUSCAR,
+                    onClick = { pantallaActual = PantallaPrincipal.BUSCAR },
                     icon = { Text("🔍", fontSize = 16.sp) },
-                    label = { Text("BUSCAR SALA", fontWeight = FontWeight.Bold, color = DuocAzul, fontSize = 11.sp) }
+                    label = {
+                        Text(
+                            "BUSCAR SALA",
+                            fontWeight = if (pantallaActual == PantallaPrincipal.BUSCAR) FontWeight.Bold else FontWeight.Normal,
+                            color = if (pantallaActual == PantallaPrincipal.BUSCAR) DuocAzul else DuocTextoGris,
+                            fontSize = 11.sp
+                        )
+                    }
                 )
                 NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = { Text("📋", fontSize = 16.sp) },
-                    label = { Text("MIS RESERVAS", color = DuocTextoGris, fontSize = 11.sp) }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { },
-                    icon = { Text("⚠️", fontSize = 16.sp) },
-                    label = { Text("INCIDENCIAS", color = DuocTextoGris, fontSize = 11.sp) }
+                    selected = pantallaActual == PantallaPrincipal.CALENDARIO,
+                    onClick = { pantallaActual = PantallaPrincipal.CALENDARIO },
+                    icon = { Text("📅", fontSize = 16.sp) },
+                    label = {
+                        Text(
+                            "CALENDARIO",
+                            fontWeight = if (pantallaActual == PantallaPrincipal.CALENDARIO) FontWeight.Bold else FontWeight.Normal,
+                            color = if (pantallaActual == PantallaPrincipal.CALENDARIO) DuocAzul else DuocTextoGris,
+                            fontSize = 11.sp
+                        )
+                    }
                 )
             }
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(DuocGrisFondo)
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            item {
-                Text(
-                    text = "CÓDIGO DE SALA",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = DuocAzul
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                OutlinedTextField(
-                    value = codigoSala,
-                    onValueChange = { codigoSala = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        focusedBorderColor = DuocAzul,
-                        unfocusedBorderColor = DuocGrisBorde
-                    )
-                )
-            }
+        Box(modifier = Modifier.padding(paddingValues)) {
+            when (pantallaActual) {
+                PantallaPrincipal.BUSCAR -> {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        // Header Superior
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(DuocAzul)
+                                .statusBarsPadding()
+                                .padding(horizontal = 16.dp, vertical = 16.dp)
+                        ) {
+                            Column(modifier = Modifier.align(Alignment.CenterStart)) {
+                                Text(
+                                    text = "DISPONIBILIDAD DE SALAS",
+                                    color = Color.White,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Consulta de Recintos",
+                                    color = DuocAmarillo,
+                                    fontSize = 13.sp
+                                )
+                            }
 
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Laboratorio $codigoSala",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = DuocAzul
-                        )
-                        Text(
-                            text = "Piso 2 · Capacidad: 30 personas",
-                            fontSize = 13.sp,
-                            color = DuocTextoGris
-                        )
+                            OutlinedButton(
+                                onClick = onLogoutClick,
+                                modifier = Modifier.align(Alignment.CenterEnd),
+                                shape = RoundedCornerShape(8.dp),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)
+                            ) {
+                                Text("SALIR", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = DuocAmarillo)
+                            }
+                        }
+
+                        // Contenido Buscar
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(DuocGrisFondo)
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            item {
+                                Text(
+                                    text = "CÓDIGO DE SALA",
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = DuocAzul
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                OutlinedTextField(
+                                    value = codigoSala,
+                                    onValueChange = { codigoSala = it },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedContainerColor = Color.White,
+                                        unfocusedContainerColor = Color.White,
+                                        focusedBorderColor = DuocAzul,
+                                        unfocusedBorderColor = DuocGrisBorde
+                                    )
+                                )
+                            }
+
+                            item {
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(8.dp),
+                                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                                ) {
+                                    Column(modifier = Modifier.padding(16.dp)) {
+                                        Text(
+                                            text = "Laboratorio $codigoSala",
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = DuocAzul
+                                        )
+                                        Text(
+                                            text = "Piso 2 · Capacidad: 30 personas",
+                                            fontSize = 13.sp,
+                                            color = DuocTextoGris
+                                        )
+                                    }
+                                }
+                            }
+
+                            item {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "BLOQUES HORARIOS",
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = DuocAzul
+                                )
+                            }
+
+                            items(bloques) { bloque ->
+                                BloqueHorarioCard(bloque = bloque, onReservarClick = onReservarClick)
+                            }
+                        }
                     }
                 }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "BLOQUES HORARIOS",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = DuocAzul
-                )
-            }
-
-            items(bloques) { bloque ->
-                BloqueHorarioCard(bloque = bloque, onReservarClick = onReservarClick)
+                PantallaPrincipal.CALENDARIO -> {
+                    CalendarioSalasScreen()
+                }
             }
         }
     }
