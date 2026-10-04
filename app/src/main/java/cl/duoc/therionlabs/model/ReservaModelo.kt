@@ -26,3 +26,20 @@ data class ReservaSemestral(
     val HoraInicio: String,
     val HoraFin: String
 )
+
+enum class EstadoReserva{
+    PENDIENTE,
+    APROBADA,
+    RECHAZADA
+}
+data class SolicitudReserva(
+    val id: String,
+    val codigoSala: String,
+    val nombreDocente: String,
+    val asignatura: String,
+    val fecha: String,
+    val HoraInicio: String,
+    val HoraFin: String,
+    val estado: EstadoReserva= EstadoReserva.PENDIENTE,
+    val motivo: String?=null
+)
