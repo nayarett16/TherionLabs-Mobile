@@ -2,8 +2,11 @@ package cl.duoc.therionlabs.model
 data class Sala(
     val codigo: String,
     val nombre: String,
+    val tipo: String,
     val piso: Int,
-    val capacidad: Int
+    val capacidad: Int,
+    val caracteristicas: List<String> = emptyList(),
+    val disponibleAhora: Boolean=true
 )
 data class BloqueHorario(
     val id:String,
